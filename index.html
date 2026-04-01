@@ -532,7 +532,8 @@
   .wheel-modal {
     background:linear-gradient(180deg,#1a0a08,#2d1210);
     border-radius:28px 28px 0 0; width:100%;
-    padding:0 0 28px; position:relative; overflow:hidden;
+    padding:0 0 28px; position:relative; overflow-y:auto; overflow-x:hidden;
+    max-height:92vh;
     animation:wm-up 0.32s cubic-bezier(.22,.68,0,1.2);
   }
   .wheel-modal::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,#FFE066,#c0392b,#FFE066); }
@@ -1191,8 +1192,15 @@ function showPrize(i){
   const zaloBox=document.querySelector('.prize-zalo-box');
   if(validity) validity.style.display=isLucky?'none':'inline-block';
   if(zaloBox)  zaloBox.style.display =isLucky?'none':'flex';
-  document.getElementById('prizePopup').classList.add('show');
-  document.getElementById('spinAgainMsg').classList.add('show');
+  // Hide wheel to make room for prize popup (buttons were below fold)
+  setTimeout(function(){
+    const ww=document.querySelector('.wheel-wrap');
+    const ws=document.querySelector('.wm-sub');
+    if(ww) ww.style.display='none';
+    if(ws) ws.style.display='none';
+    document.getElementById('prizePopup').classList.add('show');
+    document.getElementById('spinAgainMsg').classList.add('show');
+  },600);
   if(!isLucky)confetti();
 }
 function confetti(){
