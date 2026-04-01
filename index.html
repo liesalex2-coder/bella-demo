@@ -649,14 +649,6 @@
 
       <!-- BANNERS -->
       <div style="padding:12px 16px 0;display:flex;flex-direction:column;gap:10px;">
-        <div class="promo-banner promo-feature" style="cursor:pointer;" onclick="openPromoModal()">
-          <div class="pb-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg></div>
-          <div class="pb-text">
-            <div class="pb-title">Khách mới: giảm 15%</div>
-            <div class="pb-sub">Dành cho lần đầu ghé tiệm</div>
-          </div>
-          <div class="pb-cta">Nhận ngay</div>
-        </div>
         <div class="promo-banner wheel-feature" style="background:linear-gradient(135deg,#c0392b,#8e1a0e);cursor:pointer;" onclick="openWheelModal()">
           <div class="pb-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#FFE066" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="2" x2="12" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/><line x1="19.07" y1="4.93" x2="4.93" y2="19.07"/></svg></div>
           <div class="pb-text">
@@ -1105,6 +1097,26 @@ initFeatures();
       </div>
     </div>
 
+<!-- WELCOME POPUP -->
+<div id="welcomeBackdrop" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:600;align-items:flex-end;justify-content:center;max-width:430px;margin:0 auto;">
+  <div id="welcomeModal" style="background:#fff;border-radius:24px 24px 0 0;width:100%;padding:0 0 32px;animation:wm-up 0.35s cubic-bezier(.22,.68,0,1.2);">
+    <div style="background:linear-gradient(135deg,var(--primary),var(--primary-dark));border-radius:24px 24px 0 0;padding:28px 24px 24px;text-align:center;position:relative;">
+      <div style="font-size:48px;margin-bottom:8px;">🎁</div>
+      <div style="font-size:20px;font-weight:800;color:white;margin-bottom:4px;">Chào mừng khách mới!</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.8);">Bạn nhận được ưu đãi đặc biệt</div>
+    </div>
+    <div style="padding:20px 24px 0;">
+      <div id="welcomeDiscountBadge" style="text-align:center;background:var(--primary);color:white;font-size:36px;font-weight:900;padding:14px;border-radius:16px;letter-spacing:1px;margin-bottom:12px;">GIẢM 15%</div>
+      <div style="font-size:13px;color:var(--muted);text-align:center;margin-bottom:16px;">Dành riêng cho lần đầu tiên ghé tiệm</div>
+      <div style="background:#f0f8ff;border:1.5px solid #0068ff22;border-radius:12px;padding:12px 14px;display:flex;align-items:flex-start;gap:10px;margin-bottom:20px;">
+        <span style="font-size:20px;flex-shrink:0;">💬</span>
+        <span style="font-size:12px;color:#333;line-height:1.5;">Ưu đãi đã được gửi vào <strong style="color:#0068ff;">Zalo của bạn</strong>. Xuất trình tin nhắn Zalo khi đến tiệm để nhận giảm giá.</span>
+      </div>
+      <button onclick="closeWelcome()" style="display:block;width:100%;background:var(--primary);color:white;border:none;border-radius:12px;padding:14px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Be Vietnam Pro',sans-serif;">Bắt đầu khám phá →</button>
+    </div>
+  </div>
+</div>
+
 <!-- PROMO MODAL -->
 <div class="promo-modal-backdrop promo-feature" id="promoBackdrop" onclick="if(event.target.id==='promoBackdrop')closePromoModal()">
   <div class="promo-modal">
@@ -1189,6 +1201,18 @@ function drawWheel(rot){
   });
   ctx.beginPath();ctx.arc(cx,cy,28,0,2*Math.PI);ctx.fillStyle='#1a0a08';ctx.fill();
   ctx.strokeStyle='#FFE066';ctx.lineWidth=3;ctx.stroke();
+}
+
+// Welcome popup auto-show after 1.5s
+(function(){
+  setTimeout(function(){
+    var bd=document.getElementById('welcomeBackdrop');
+    if(bd) bd.style.display='flex';
+  },3000);
+})();
+function closeWelcome(){
+  var bd=document.getElementById('welcomeBackdrop');
+  if(bd) bd.style.display='none';
 }
 function openWheelModal(){
   const bd=document.getElementById('wheelBackdrop');
