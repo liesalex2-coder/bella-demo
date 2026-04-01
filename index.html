@@ -509,9 +509,8 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    height: 76px;
+    min-height: 76px;
     box-sizing: border-box;
-    overflow: hidden;
     width: 100%;
     position: relative;
   }
@@ -845,20 +844,41 @@ const CONFIG = { booking: true, wheel: true, promo: true };
   // ── HOME: render services ──
   function renderServices(filter) {
     const list = document.getElementById('service-list');
-    const filtered = filter === 'all' ? SERVICES : SERVICES.filter(s => s.cat === filter);
-    list.innerHTML = filtered.map(s => `
-      <div class="service-card" onclick="openService('${s.id}')">
-        <div class="svc-icon" style="background:none;padding:0;overflow:hidden">
-        ${SVC_IMGS[s.id] ? `<img src="${SVC_IMGS[s.id]}" style="width:52px;height:52px;object-fit:cover;border-radius:14px">` : s.emoji}
-      </div>
-        <div class="svc-body">
-          <div class="svc-name">${s.name}${s.hot ? '<span class="badge-hot">HOT</span>' : ''}</div>
-          <div class="svc-dur">⏱ ${s.dur} phút</div>
-          <div class="svc-price">${fmt(s.price)}</div>
-        </div>
-        <div class="svc-arrow">›</div>
-      </div>
-    `).join('');
+    list.innerHTML = '';
+    const filtered = filter === 'all' ? SERVICES : SERVICES.filter(function(s) { return s.cat === filter; });
+    filtered.forEach(function(s) {
+      const card = document.createElement('div');
+      card.className = 'service-card';
+      card.onclick = function() { openService(s.id); };
+
+      const iconDiv = document.createElement('div');
+      iconDiv.className = 'svc-icon';
+      iconDiv.style.cssText = 'background:none;padding:0;overflow:hidden';
+      if (SVC_IMGS[s.id]) {
+        const img = document.createElement('img');
+        img.src = SVC_IMGS[s.id];
+        img.style.cssText = 'width:52px;height:52px;object-fit:cover;border-radius:14px';
+        iconDiv.appendChild(img);
+      } else {
+        iconDiv.textContent = s.emoji;
+      }
+
+      const body = document.createElement('div');
+      body.className = 'svc-body';
+      const hotBadge = s.hot ? '<span class="badge-hot">HOT</span>' : '';
+      body.innerHTML = '<div class="svc-name">' + s.name + hotBadge + '</div>' +
+        '<div class="svc-dur">\u23f1 ' + s.dur + ' ph\u00fat</div>' +
+        '<div class="svc-price">' + fmt(s.price) + '</div>';
+
+      const arrow = document.createElement('div');
+      arrow.className = 'svc-arrow';
+      arrow.textContent = '\u203a';
+
+      card.appendChild(iconDiv);
+      card.appendChild(body);
+      card.appendChild(arrow);
+      list.appendChild(card);
+    });
   }
 
   function filterTab(btn, cat) {
