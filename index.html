@@ -546,14 +546,20 @@
   .wheel-pointer { position:absolute; top:-14px; left:50%; transform:translateX(-50%); font-size:26px; filter:drop-shadow(0 2px 6px rgba(0,0,0,.5)); z-index:10; }
   .wheel-center-btn { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:56px; height:56px; border-radius:50%; background:linear-gradient(135deg,#FFE066,#f0b800); border:3px solid white; box-shadow:0 4px 16px rgba(0,0,0,.4); cursor:pointer; font-size:11px; font-weight:800; color:#8e1a0e; letter-spacing:-0.3px; z-index:10; line-height:1.2; text-align:center; }
   .wheel-center-btn:disabled { opacity:0.5; cursor:default; }
-  .prize-popup { display:none; margin:0 16px; background:linear-gradient(135deg,#FFE066,#f5d020); border-radius:16px; padding:16px; text-align:center; animation:popIn 0.35s cubic-bezier(.22,.68,0,1.2); }
+  .prize-popup { display:none; margin:0 12px; border-radius:16px; overflow:hidden; animation:popIn 0.35s cubic-bezier(.22,.68,0,1.2); }
   .prize-popup.show { display:block; }
   @keyframes popIn { from{transform:scale(.7);opacity:0} to{transform:scale(1);opacity:1} }
-  .prize-emoji { font-size:36px; margin-bottom:6px; }
-  .prize-name  { font-size:20px; font-weight:700; color:#8e1a0e; margin-bottom:4px; }
-  .prize-detail{ font-size:12px; color:#a0421a; }
-  .prize-save-btn { margin-top:12px; background:#c0392b; color:white; border:none; border-radius:10px; padding:10px 24px; font-size:13px; font-weight:700; cursor:pointer; width:100%; }
-  .prize-home-btn { margin-top:8px; background:transparent; color:#8e1a0e; border:1.5px solid #c0392b; border-radius:10px; padding:9px 24px; font-size:13px; font-weight:600; cursor:pointer; width:100%; }
+  .prize-top { background:linear-gradient(135deg,#FFE066,#f5d020); padding:14px 16px 12px; text-align:center; }
+  .prize-emoji { font-size:34px; margin-bottom:4px; }
+  .prize-name  { font-size:18px; font-weight:800; color:#8e1a0e; margin-bottom:2px; }
+  .prize-detail{ font-size:12px; color:#a0421a; margin-bottom:8px; }
+  .prize-validity { display:inline-block; background:rgba(142,26,14,0.12); color:#8e1a0e; font-size:10px; font-weight:700; padding:3px 10px; border-radius:20px; letter-spacing:.4px; }
+  .prize-bottom { background:#fff; padding:12px 16px; }
+  .prize-zalo-box { display:flex; align-items:flex-start; gap:10px; background:#f0f8ff; border:1.5px solid #0068ff22; border-radius:12px; padding:10px 12px; margin-bottom:10px; text-align:left; }
+  .prize-zalo-icon { font-size:22px; flex-shrink:0; margin-top:1px; }
+  .prize-zalo-text { font-size:12px; color:#333; line-height:1.5; }
+  .prize-zalo-text strong { color:#0068ff; }
+  .prize-home-btn { background:#c0392b; color:white; border:none; border-radius:10px; padding:10px 24px; font-size:13px; font-weight:700; cursor:pointer; width:100%; }
   .wheel-spin-again { display:none; text-align:center; margin-top:10px; font-size:12px; color:rgba(255,255,255,.4); }
   .wheel-spin-again.show { display:block; }
 
@@ -1091,11 +1097,19 @@ initFeatures();
       <button class="wheel-center-btn" id="spinBtn" onclick="spinWheel()">QUAY<br>NGAY</button>
     </div>
     <div class="prize-popup" id="prizePopup">
-      <div class="prize-emoji" id="prizeEmoji"></div>
-      <div class="prize-name" id="prizeName"></div>
-      <div class="prize-detail" id="prizeDetail"></div>
-      <button class="prize-save-btn" onclick="closeWheelModal()">Lưu ưu đãi của tôi 💾</button>
-      <button class="prize-home-btn" onclick="closeWheelModal();navTo('page-home','nav-home')">🏠 Về trang chủ</button>
+      <div class="prize-top">
+        <div class="prize-emoji" id="prizeEmoji"></div>
+        <div class="prize-name" id="prizeName"></div>
+        <div class="prize-detail" id="prizeDetail"></div>
+        <div class="prize-validity">Có hiệu lực trong 30 ngày</div>
+      </div>
+      <div class="prize-bottom">
+        <div class="prize-zalo-box">
+          <div class="prize-zalo-icon">💬</div>
+          <div class="prize-zalo-text">Ưu đãi đã được gửi vào <strong>Zalo của bạn</strong>! Xuất trình tin nhắn khi đến tiệm để nhận thưởng.</div>
+        </div>
+        <button class="prize-home-btn" onclick="closeWheelModal();navTo('page-home','nav-home')">🏠 Về trang chủ</button>
+      </div>
     </div>
     <div class="wheel-spin-again" id="spinAgainMsg">Quay lại vào ngày mai 🌸</div>
   </div>
@@ -1166,12 +1180,20 @@ function spinWheel(){
 }
 function showPrize(i){
   const p=WP[i];
+  const isLucky=p.label==='Chúc may mắn';
   document.getElementById('prizeEmoji').textContent=p.emoji;
   document.getElementById('prizeName').textContent=p.label;
-  document.getElementById('prizeDetail').textContent=p.detail;
+  document.getElementById('prizeDetail').textContent=isLucky
+    ?'Hẹn gặp lại bạn ngày mai! Thử lại vận may nhé 🌸'
+    :p.detail;
+  // Conditional ZNS block
+  const validity=document.querySelector('.prize-validity');
+  const zaloBox=document.querySelector('.prize-zalo-box');
+  if(validity) validity.style.display=isLucky?'none':'inline-block';
+  if(zaloBox)  zaloBox.style.display =isLucky?'none':'flex';
   document.getElementById('prizePopup').classList.add('show');
   document.getElementById('spinAgainMsg').classList.add('show');
-  if(p.label!=='Chúc may mắn')confetti();
+  if(!isLucky)confetti();
 }
 function confetti(){
   const m=document.querySelector('.wheel-modal');
