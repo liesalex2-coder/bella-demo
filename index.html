@@ -553,6 +553,7 @@
   .prize-name  { font-size:20px; font-weight:700; color:#8e1a0e; margin-bottom:4px; }
   .prize-detail{ font-size:12px; color:#a0421a; }
   .prize-save-btn { margin-top:12px; background:#c0392b; color:white; border:none; border-radius:10px; padding:10px 24px; font-size:13px; font-weight:700; cursor:pointer; width:100%; }
+  .prize-home-btn { margin-top:8px; background:transparent; color:#8e1a0e; border:1.5px solid #c0392b; border-radius:10px; padding:9px 24px; font-size:13px; font-weight:600; cursor:pointer; width:100%; }
   .wheel-spin-again { display:none; text-align:center; margin-top:10px; font-size:12px; color:rgba(255,255,255,.4); }
   .wheel-spin-again.show { display:block; }
 
@@ -1094,6 +1095,7 @@ initFeatures();
       <div class="prize-name" id="prizeName"></div>
       <div class="prize-detail" id="prizeDetail"></div>
       <button class="prize-save-btn" onclick="closeWheelModal()">Lưu ưu đãi của tôi 💾</button>
+      <button class="prize-home-btn" onclick="closeWheelModal();navTo('page-home','nav-home')">🏠 Về trang chủ</button>
     </div>
     <div class="wheel-spin-again" id="spinAgainMsg">Quay lại vào ngày mai 🌸</div>
   </div>
@@ -1130,7 +1132,22 @@ function drawWheel(rot){
   ctx.beginPath();ctx.arc(cx,cy,28,0,2*Math.PI);ctx.fillStyle='#1a0a08';ctx.fill();
   ctx.strokeStyle='#FFE066';ctx.lineWidth=3;ctx.stroke();
 }
-function openWheelModal(){document.getElementById('wheelBackdrop').classList.add('open');drawWheel(wAngle);}
+function openWheelModal(){
+  const bd=document.getElementById('wheelBackdrop');
+  bd.classList.add('open');
+  drawWheel(wAngle);
+  // Swipe-to-spin on wheel canvas
+  const ww=bd.querySelector('.wheel-wrap');
+  let tx=0,ty=0;
+  ww.addEventListener('touchstart',function(e){
+    tx=e.touches[0].clientX;ty=e.touches[0].clientY;
+  },{passive:true});
+  ww.addEventListener('touchend',function(e){
+    const dx=e.changedTouches[0].clientX-tx;
+    const dy=e.changedTouches[0].clientY-ty;
+    if(Math.sqrt(dx*dx+dy*dy)>18 && !hasSpun) spinWheel();
+  },{passive:true});
+}
 function closeWheelModal(){document.getElementById('wheelBackdrop').classList.remove('open');}
 function spinWheel(){
   if(hasSpun)return;hasSpun=true;document.getElementById('spinBtn').disabled=true;
